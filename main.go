@@ -5,6 +5,7 @@ import (
 	"os"
 
 	tea "github.com/charmbracelet/bubbletea"
+	"github.com/charmbracelet/lipgloss"
 )
 
 type Model struct {
@@ -31,7 +32,11 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m Model) View() string {
-	s := "Go Tempo"
+	s := lipgloss.NewStyle().
+		Bold(true).
+		Underline(true).
+		Foreground(lipgloss.Color("4")).
+		Render("Go Tempo")
 
 	return s
 }
