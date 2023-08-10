@@ -21,6 +21,13 @@ var ClockStyle = lipgloss.NewStyle().
 	Bold(true).
 	Foreground(lipgloss.Color("15"))
 
+var HelpStyle = lipgloss.NewStyle().
+	Width(Size.Width).
+	Padding(0, 1).
+	Align(lipgloss.Left).
+	Italic(true).
+	Foreground(lipgloss.Color("8"))
+
 var ErrorStyle = lipgloss.NewStyle().
 	Bold(true).
 	Padding(0, 1).

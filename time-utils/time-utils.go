@@ -7,8 +7,8 @@ func SecondToClock(s int) string {
 	minutes := (s - seconds) / 60
 
 	secondsStr := fmt.Sprint(seconds)
-	if secondsStr == "0" {
-		secondsStr = "00"
+	if len(secondsStr) == 1 {
+		secondsStr = fmt.Sprint("0", seconds)
 	}
 
 	return fmt.Sprint(minutes, ":", secondsStr)

@@ -14,9 +14,11 @@ import (
 )
 
 type Model struct {
-	timeLeft  int
-	workTime  int
-	pauseTime int
+	timeLeft     int
+	workTime     int
+	pauseTime    int
+	currentPhase string
+	ticking      bool
 }
 
 type TickMsg time.Time
@@ -39,10 +41,25 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 		case "ctrl+c", "q":
 			return m, tea.Quit
+
+		case " ":
+			m.ticking = !m.ticking
 		}
 
 	case TickMsg:
-		m.timeLeft--
+		if m.ticking {
+			m.timeLeft--
+
+			if m.timeLeft == 0 {
+				if m.currentPhase == "work" {
+					m.currentPhase = "pause"
+					m.timeLeft = m.pauseTime
+				} else if m.currentPhase == "pause" {
+					m.currentPhase = "work"
+					m.timeLeft = m.workTime
+				}
+			}
+		}
 		return m, doTick()
 	}
 
@@ -59,16 +76,20 @@ func (m Model) View() string {
 		return styles.ErrorStyle.Render("An error occured : \n" + err.Error())
 	}
 
-	s = lipgloss.JoinVertical(lipgloss.Center, title, styles.ClockStyle.Render(clock))
+	help := styles.HelpStyle.Render("q : quit  •  space : pause/resume  •  r : reset  •  e : edit times")
+
+	s = lipgloss.JoinVertical(lipgloss.Center, title, styles.ClockStyle.Render(clock), help)
 
 	return s
 }
 
 func main() {
 	p := tea.NewProgram(Model{
-		timeLeft:  25 * 60,
-		workTime:  25 * 60,
-		pauseTime: 5 * 60,
+		timeLeft:     25 * 60,
+		workTime:     25 * 60,
+		pauseTime:    5 * 60,
+		currentPhase: "work",
+		ticking:      true,
 	}, tea.WithAltScreen())
 
 	if _, err := p.Run(); err != nil {
