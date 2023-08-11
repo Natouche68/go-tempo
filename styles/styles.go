@@ -17,9 +17,16 @@ var TitleStyle = lipgloss.NewStyle().
 	Foreground(lipgloss.Color("4"))
 
 var ClockStyle = lipgloss.NewStyle().
-	Margin(1).
+	MarginTop(1).
 	Bold(true).
 	Foreground(lipgloss.Color("15"))
+
+var LabelStyle = lipgloss.NewStyle().
+	MarginBottom(2).
+	Align(lipgloss.Center)
+
+var WorkColor = lipgloss.Color("3")
+var PauseColor = lipgloss.Color("2")
 
 var HelpStyle = lipgloss.NewStyle().
 	Width(Size.Width).

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"os"
+	"strings"
 	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
@@ -57,7 +58,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		if m.ticking {
 			m.timeLeft--
 
-			if m.timeLeft == 0 {
+			if m.timeLeft < 0 {
 				if m.currentPhase == "work" {
 					m.currentPhase = "pause"
 					m.timeLeft = m.pauseTime
@@ -74,7 +75,7 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 }
 
 func (m Model) View() string {
-	s := ""
+	var s string
 
 	title := styles.TitleStyle.Render("Go Tempo")
 
@@ -82,10 +83,41 @@ func (m Model) View() string {
 	if err != nil {
 		return styles.ErrorStyle.Render("An error occured : \n" + err.Error())
 	}
+	clock = strings.TrimSuffix(clock, "\n")
 
-	help := styles.HelpStyle.Render("q : quit  •  space : pause/resume  •  r : reset  •  e : edit times")
+	var label string
+	switch m.currentPhase {
+	case "work":
+		if m.ticking {
+			label = styles.LabelStyle.
+				Copy().
+				Foreground(styles.WorkColor).
+				Render("- Work -")
+		} else {
+			label = styles.LabelStyle.
+				Copy().
+				Foreground(styles.WorkColor).
+				Italic(true).
+				Render("- Work (paused) -")
+		}
+	case "pause":
+		if m.ticking {
+			label = styles.LabelStyle.
+				Copy().
+				Foreground(styles.PauseColor).
+				Render("- Pause -")
+		} else {
+			label = styles.LabelStyle.
+				Copy().
+				Foreground(styles.PauseColor).
+				Italic(true).
+				Render("- Pause (paused) -")
+		}
+	}
 
-	s = lipgloss.JoinVertical(lipgloss.Center, title, styles.ClockStyle.Render(clock), help)
+	help := styles.HelpStyle.Render("q : quit  •  space : pause/resume  •  r : reset")
+
+	s = lipgloss.JoinVertical(lipgloss.Center, title, styles.ClockStyle.Render(clock), label, help)
 
 	return s
 }
