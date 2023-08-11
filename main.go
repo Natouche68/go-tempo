@@ -44,6 +44,13 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 		case " ":
 			m.ticking = !m.ticking
+
+		case "r":
+			if m.currentPhase == "work" {
+				m.timeLeft = m.workTime
+			} else if m.currentPhase == "pause" {
+				m.timeLeft = m.pauseTime
+			}
 		}
 
 	case TickMsg:
