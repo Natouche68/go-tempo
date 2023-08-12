@@ -41,3 +41,16 @@ GOOS=linux go build -o bin/go-tempo main.go
 ```
 
 > Don't forget to build to the bin directory, so the compiled binaries are not commited to Github.
+
+### Publish to pkg.go.dev
+
+Follow these instructions to publish Go Tempo to pkg.go.dev, so others can install it using `go install`.
+
+```sh
+go mod tidy
+
+# After publishing the code to Github, and after creating a new release :
+GOPROXY=proxy.golang.org go list -m github.com/Natouche68/go-tempo@version
+```
+
+> Replace `version` in the last command with the version you want to publish.
